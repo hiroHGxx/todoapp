@@ -18,17 +18,35 @@
   <script>
     const input = document.getElementById('taskInput');
     const list = document.getElementById('taskList');
+    let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+
+    function save() {
+      localStorage.setItem('tasks', JSON.stringify(tasks));
+    }
+
+    function createTaskElement(text) {
+      const li = document.createElement('li');
+      li.textContent = text;
+      const del = document.createElement('button');
+      del.textContent = 'Delete';
+      del.className = 'delete';
+      del.addEventListener('click', () => {
+        tasks = tasks.filter(t => t !== text);
+        save();
+        li.remove();
+      });
+      li.appendChild(del);
+      list.appendChild(li);
+    }
+
+    tasks.forEach(createTaskElement);
+
     document.getElementById('addButton').addEventListener('click', () => {
       const text = input.value.trim();
       if (text !== '') {
-        const li = document.createElement('li');
-        li.textContent = text;
-        const del = document.createElement('button');
-        del.textContent = 'Delete';
-        del.className = 'delete';
-        del.addEventListener('click', () => li.remove());
-        li.appendChild(del);
-        list.appendChild(li);
+        tasks.push(text);
+        save();
+        createTaskElement(text);
         input.value = '';
         input.focus();
       }
