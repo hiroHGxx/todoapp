@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Simple ToDo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2rem; }
+    ul { list-style: none; padding: 0; }
+    li { padding: 0.5rem 0; }
+    button.delete { margin-left: 1rem; }
+  </style>
+</head>
+<body>
+  <h1>ToDo List</h1>
+  <input id="taskInput" type="text" placeholder="Add new task">
+  <button id="addButton">Add</button>
+  <ul id="taskList"></ul>
+  <script src="tasks.js"></script>
+  <script>
+    const input = document.getElementById('taskInput');
+    const list = document.getElementById('taskList');
+
+    function render() {
+      list.innerHTML = '';
+      Todo.getTasks().forEach(text => {
+        const li = document.createElement('li');
+        li.textContent = text;
+        const del = document.createElement('button');
+        del.textContent = 'Delete';
+        del.className = 'delete';
+        del.addEventListener('click', () => {
+          Todo.deleteTask(text);
+          render();
+        });
+        li.appendChild(del);
+        list.appendChild(li);
+      });
+    }
+
+    document.getElementById('addButton').addEventListener('click', () => {
+      const text = input.value.trim();
+      if (text !== '') {
+        Todo.addTask(text);
+        render();
+        input.value = '';
+        input.focus();
+      }
+    });
+    input.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('addButton').click();
+      }
+    });
+    render();
+  </script>
+</body>
+</html>
